@@ -1,5 +1,5 @@
 // Local development API. Replace this with your deployed Render URL before publishing.
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "https://civicai-backend-qrb9.onrender.com";
 
 const CURRENT_USER_ID = localStorage.getItem("civicai_user_id");
 
