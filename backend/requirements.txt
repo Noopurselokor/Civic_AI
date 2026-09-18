@@ -2,7 +2,7 @@ fastapi==0.112.2
 starlette==0.38.6
 uvicorn
 supabase
-tensorflow==2.15.0
+tensorflow
 pillow==10.4.0
 numpy==1.26.4
 huggingface_hub==0.30.2
