@@ -3,14 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Report an Issue</title>
+  <title>CivicAI — Report an Issue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>Report an Issue</h1>
-  <input type="file" id="photo-input" accept="image/*" capture="environment">
-  <button id="submit-report">Submit Report</button>
-  <p id="status-msg"></p>
+<body class="report-page">
+
+  <div class="report-topbar">
+    <div class="logo"><span class="logo-civic">Civic</span><span class="logo-ai">AI</span></div>
+    <div class="topbar-right">Nagpur Municipal Corporation</div>
+  </div>
+
+  <div class="report-container">
+
+    <div class="report-card">
+      <h2>Report a Civic Issue</h2>
+      <p class="card-sub">Take a clear photo and allow location access. AI will classify and prioritize your report.</p>
+
+      <label class="field-label">📷 Photo of the issue</label>
+      <input type="file" id="photo-input" accept="image/*" capture="environment" required>
+      <p class="field-help">Take a clear photo showing the issue clearly.</p>
+
+      <label class="field-label" for="description">📝 Describe the issue</label>
+      <textarea id="description" rows="4" maxlength="500" required
+        placeholder="Write 1–3 sentences. Mention danger, nearby schools or hospitals, flooding, or access problems."></textarea>
+      <p class="field-help">Maximum 500 characters · 1–3 sentences.</p>
+
+      <button id="submit-report" type="button">📤 Submit Report</button>
+
+      <p id="loading-msg" class="hidden">🔍 Analysing your report with AI…</p>
+      <p id="error-msg" class="hidden" role="alert"></p>
+
+      <section id="accepted-card" class="hidden" aria-live="polite">
+        <h2>✅ Report Submitted!</h2>
+        <div class="result-row"><span class="rlabel">Category</span><span class="rvalue" id="result-category"></span></div>
+        <div class="result-row"><span class="rlabel">Severity</span><span class="rvalue" id="result-severity"></span></div>
+        <div class="result-row"><span class="rlabel">Sentiment</span><span class="rvalue" id="result-sentiment"></span></div>
+        <div class="result-row"><span class="rlabel">Location</span><span class="rvalue" id="result-address"></span></div>
+        <p id="duplicate-note" class="hidden">⚠️ A similar report already exists nearby. Your report has been linked to it.</p>
+      </section>
+    </div>
+
+    <div class="report-card">
+      <p class="section-title">📋 My Reports</p>
+      <div id="my-reports-list">Loading your reports…</div>
+    </div>
+
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

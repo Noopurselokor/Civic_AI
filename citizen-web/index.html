@@ -3,16 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CivicAI - Login</title>
+  <title>CivicAI — Citizen Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>CivicAI</h1>
-  <form id="login-form">
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button type="submit">Log in</button>
-  </form>
-  <script src="script.js"></script>
+<body class="login-page">
+
+  <div class="login-wrapper">
+
+    <!-- LEFT PANEL — branding -->
+    <div class="login-left">
+      <div class="brand">
+        <div class="brand-logo"><span class="logo-civic">Civic</span><span class="logo-ai">AI</span></div>
+        <p class="brand-tagline">Your city. Your voice. Real change.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon">🕳️</span>
+          <span class="stat-num" id="count-pothole">—</span>
+          <span class="stat-label">Potholes</span>
+          <span class="stat-desc">Reported & tracked</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">💧</span>
+          <span class="stat-num" id="count-waterlogging">—</span>
+          <span class="stat-label">Waterlogging</span>
+          <span class="stat-desc">Mapped in real-time</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🗑️</span>
+          <span class="stat-num" id="count-garbage">—</span>
+          <span class="stat-label">Garbage</span>
+          <span class="stat-desc">Flagged for pickup</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">✅</span>
+          <span class="stat-num" id="count-resolved">—</span>
+          <span class="stat-label">Resolved</span>
+          <span class="stat-desc">Issues fixed by city</span>
+        </div>
+      </div>
+
+      <div class="how-it-works">
+        <div class="step"><span class="step-num">1</span><span>Snap a photo of the issue</span></div>
+        <div class="step"><span class="step-num">2</span><span>AI classifies & prioritizes it</span></div>
+        <div class="step"><span class="step-num">3</span><span>Municipal team gets notified</span></div>
+        <div class="step"><span class="step-num">4</span><span>Track resolution in real-time</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL — auth form -->
+    <div class="login-right">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo"><span class="logo-civic">Civic</span><span class="logo-ai">AI</span></div>
+          <h2 id="auth-title">Welcome back</h2>
+          <p id="auth-subtitle">Log in to report or track civic issues</p>
+        </div>
+
+        <form id="auth-form" novalidate>
+          <div class="input-group hidden" id="name-group">
+            <label>Full name</label>
+            <input type="text" id="name" placeholder="Your full name" autocomplete="name">
+          </div>
+          <div class="input-group">
+            <label>Email address</label>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" minlength="6" required>
+          </div>
+          <p id="auth-error" class="hidden auth-error" role="alert"></p>
+          <button id="auth-submit" type="submit">Log in</button>
+        </form>
+
+        <div class="auth-toggle">
+          <span id="toggle-text">Don't have an account?</span>
+          <a id="toggle-mode" href="#">Sign up</a>
+        </div>
+
+        <p class="auth-footer">By continuing, you agree to help improve your city 🏙️</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/reports");
+        const data = await res.json();
+        document.getElementById("count-pothole").textContent     = data.filter(r => r.category === "pothole").length;
+        document.getElementById("count-waterlogging").textContent = data.filter(r => r.category === "waterlogging").length;
+        document.getElementById("count-garbage").textContent     = data.filter(r => r.category === "garbage").length;
+        document.getElementById("count-resolved").textContent    = data.filter(r => r.status === "resolved").length;
+      } catch (_) {}
+    })();
+  </script>
 </body>
 </html>
