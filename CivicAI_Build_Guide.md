@@ -57,7 +57,7 @@ Everything else depends on this — do it before writing any app code.
 1. Create a new Supabase project.
 2. In Supabase's SQL editor, enable PostGIS: `create extension postgis;`
 3. Run your `schema.sql` to create four tables: `users`, `wards`, `reports`, and optionally `issue_clusters`.
-4. Get your ward boundary (Nagpur ward via OSM/Overpass Turbo, or trace manually on geojson.io as discussed) and insert it as a row in `wards`.
+4. Designed for the city with multiple civic concern areas.
 5. Manually create one test admin user directly in Supabase's Auth panel, tied to that ward — don't build the admin-creation UI, you don't need it for a demo.
 6. Test: insert one dummy report row by hand, confirm it saves correctly with valid lat/lng.
 
@@ -81,7 +81,7 @@ Build in this exact order — each piece depends on the one before it working.
 
 1. `database.py` — Supabase client connection, test it can read/write.
 2. `geocode.py` — function that calls Nominatim, takes lat/lng, returns address string.
-3. Ward lookup function — a PostGIS query (`ST_Contains`) that takes lat/lng, returns matching `ward_id`.
+3.Area lookup function — a PostGIS query (`ST_Contains`) that takes lat/lng, returns matching `area_id`.
 4. `models/classifier.py` — loads your trained model once at startup, exposes a `predict(image)` function.
 5. `priority_score.py` — the weighted formula function, takes confidence + duplicate_count + days_open + location_weight, returns a 0-1 score.
 6. `duplicate_check.py` — geo-filter query first (PostGIS `ST_DWithin`), then CLIP embedding similarity only on the filtered candidates.
