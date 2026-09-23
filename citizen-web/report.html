@@ -12,7 +12,12 @@
 
   <div class="report-topbar">
     <div class="logo"><span class="logo-civic">Civic</span><span class="logo-ai">AI</span></div>
-    <div class="topbar-right">Nagpur Municipal Corporation</div>
+    <div class="topbar-actions">
+      <a class="topbar-link" href="index.html?return=1">Back to login / sign up</a>
+      <a class="topbar-link" href="profile.html">My profile</a>
+      <span class="topbar-right" id="account-label">Citizen account</span>
+      <button class="signout-button" type="button" data-sign-out>Log out</button>
+    </div>
   </div>
 
   <div class="report-container">
@@ -52,6 +57,8 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

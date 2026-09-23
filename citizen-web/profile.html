@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicAI — My Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="report-page">
+  <div class="report-topbar">
+    <a class="logo logo-link" href="report.html"><span class="logo-civic">Civic</span><span class="logo-ai">AI</span></a>
+    <div class="topbar-actions">
+      <a class="topbar-link" href="report.html">Report an issue</a>
+      <button class="signout-button" type="button" data-sign-out>Log out</button>
+    </div>
+  </div>
+
+  <main class="profile-container">
+    <section class="profile-card">
+      <div class="profile-heading">
+        <div class="avatar" id="profile-avatar">C</div>
+        <div>
+          <p class="eyebrow">Citizen profile</p>
+          <h1 id="profile-name">Your account</h1>
+          <p class="profile-email" id="profile-email"></p>
+        </div>
+      </div>
+      <div class="profile-stats" aria-label="Report summary">
+        <div><strong id="total-reports">—</strong><span>Reports submitted</span></div>
+        <div><strong id="resolved-reports">—</strong><span>Issues resolved</span></div>
+        <div><strong id="open-reports">—</strong><span>Awaiting action</span></div>
+      </div>
+    </section>
+
+    <section class="profile-card">
+      <div class="history-heading">
+        <div><p class="eyebrow">Your activity</p><h2>Submission history</h2></div>
+        <a class="primary-link" href="report.html">Submit a report</a>
+      </div>
+      <p id="history-message" class="history-message" aria-live="polite">Loading your reports…</p>
+      <div id="profile-reports-list"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

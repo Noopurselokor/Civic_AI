@@ -1,12 +1,35 @@
 // Local development API. Replace this with your deployed Render URL before publishing.
 const BACKEND_URL = "https://civicai-backend-qrb9.onrender.com";
 
-const CURRENT_USER_ID = localStorage.getItem("civicai_user_id");
+let CURRENT_USER_ID = null;
 
-// If nobody's logged in, send them back to the login page
-if (!CURRENT_USER_ID && window.location.pathname.includes("report.html")) {
-  window.location.href = "index.html";
-}
+supabaseClient.auth.getSession().then(({ data, error }) => {
+  const user = data?.session?.user;
+  if (error || !user) {
+    localStorage.removeItem("civicai_user_id");
+    window.location.replace("index.html");
+    return;
+  }
+  CURRENT_USER_ID = user.id;
+  localStorage.setItem("civicai_user_id", user.id);
+  const label = document.getElementById("account-label");
+  if (label) label.textContent = user.user_metadata?.name || user.email || "Citizen account";
+  if (document.getElementById("my-reports-list")) loadMyReports();
+});
+
+document.querySelectorAll("[data-sign-out]").forEach(button => {
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    const { error } = await supabaseClient.auth.signOut();
+    localStorage.removeItem("civicai_user_id");
+    if (error) {
+      button.disabled = false;
+      window.alert("Could not log out. Please try again.");
+      return;
+    }
+    window.location.replace("index.html");
+  });
+});
 
 function show(el) { el.classList.remove("hidden"); }
 function hide(el) { el.classList.add("hidden"); }
@@ -24,6 +47,12 @@ document.getElementById("submit-report")?.addEventListener("click", () => {
   const loadingMsg = document.getElementById("loading-msg");
   const acceptedCard = document.getElementById("accepted-card");
   const errorMsg = document.getElementById("error-msg");
+
+  if (!CURRENT_USER_ID) {
+    errorMsg.innerText = "Please wait while we verify your account, then try again.";
+    show(errorMsg);
+    return;
+  }
 
   hide(acceptedCard);
   hide(errorMsg);
@@ -109,7 +138,7 @@ document.getElementById("submit-report")?.addEventListener("click", () => {
 // ----- My Reports status list -----
 async function loadMyReports() {
   const listEl = document.getElementById("my-reports-list");
-  if (!listEl) return;
+  if (!listEl || !CURRENT_USER_ID) return;
 
   try {
     const response = await fetch(`${BACKEND_URL}/reports/user/${CURRENT_USER_ID}`);
@@ -122,9 +151,9 @@ async function loadMyReports() {
 
     listEl.innerHTML = reports.map(r => `
       <div class="status-card ${r.status === 'resolved' ? 'status-card-resolved' : ''}">
-        <p><strong>${r.category}</strong> — ${r.address}</p>
-        <p class="severity severity-${r.severity || 'medium'}">Severity: ${r.severity || 'medium'}</p>
-        <p class="status-badge status-${r.status}">${formatStatus(r.status)}</p>
+        <p><strong>${escapeHtml(r.category)}</strong> — ${escapeHtml(r.address || "Location unavailable")}</p>
+        <p class="severity severity-${safeClass(r.severity, "medium")}">Severity: ${escapeHtml(r.severity || "medium")}</p>
+        <p class="status-badge status-${safeClass(r.status, "pending")}">${escapeHtml(formatStatus(r.status))}</p>
       </div>
     `).join("");
   } catch (err) {
@@ -139,9 +168,18 @@ function formatStatus(status) {
   return status;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[char]);
+}
+
+function safeClass(value, fallback) {
+  return /^[a-z-]+$/.test(value || "") ? value : fallback;
+}
+
 // Load the status list as soon as the page opens
 if (document.getElementById("my-reports-list")) {
-  loadMyReports();
   // Auto-refresh every 15 seconds so status changes from admin show immediately
   setInterval(loadMyReports, 15000);
 }

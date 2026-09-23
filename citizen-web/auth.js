@@ -10,8 +10,15 @@ const errorMsg    = document.getElementById("auth-error");
 const toggleLink  = document.getElementById("toggle-mode");
 const toggleText  = document.getElementById("toggle-text");
 
-const existingUserId = localStorage.getItem("civicai_user_id");
-if (existingUserId) window.location.href = "report.html";
+// Trust the Supabase session rather than the old client-set user ID.
+supabaseClient.auth.getSession().then(({ data }) => {
+  // Let the explicit Back link return here even while the citizen stays signed in.
+  if (data.session && new URLSearchParams(window.location.search).get("return") !== "1") {
+    window.location.href = "report.html";
+  } else if (!data.session) {
+    localStorage.removeItem("civicai_user_id");
+  }
+});
 
 toggleLink.addEventListener("click", (e) => {
   e.preventDefault();
@@ -65,6 +72,11 @@ form.addEventListener("submit", async (e) => {
 
     const userId = result.data.user?.id;
     if (!userId) throw new Error("Please confirm your email address, then log in.");
+    if (isSignupMode && !result.data.session) {
+      errorMsg.innerText = "Check your email to confirm your account, then log in.";
+      errorMsg.classList.remove("hidden");
+      return;
+    }
     localStorage.setItem("civicai_user_id", userId);
     window.location.href = "report.html";
 
